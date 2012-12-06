@@ -1,18 +1,33 @@
 
-This project contains utilities for working on the D programming language.
-To install, place dmd, phobos, druntime as subdirectories here. To build
-everything, just execute the command:
+`dlang-workspace` contains the basic configurations for hacking on your own
+fork of `dmd`, `druntime`, and `phobos` on nix systems, while not conflicting
+with your installed stable version.
 
-    $ sh posix/gen.sh
+To install:
     
-I might add support for windows if I need it.
+    $ git clone git://github.com/carlor/dlang-workspace.git dlang
+    $ cd dlang/
+    $ git clone <dmd,      the central repo or your fork>
+    $ git clone <druntime, the central repo or your fork>
+    $ git clone <phobos,   the central repo or your fork>
 
-So it doesn't mess up your installed stable `dmd`, the testing output will be
-moved to `./wbd`. You guess the acronym (hint: MRI).
+Now, you can run the `posix/gen.sh` script to build all repositories. You can
+specify what item specifically to build (`dmd`, `phobos`, or `druntime`) as a
+parameter to `gen.sh`.
 
-Everything is released under the GPLv3.
+It makes an executable which links to your fork of druntime/phobos called `wbd`.
+You guess the acronym (hint: MRI).
 
-Options
--------
-You can specify what item specifically to build as a parameter to `gen.sh`.
+You can specify what item specifically to build (`dmd`, `phobos`, or `druntime`)
+as a parameter to `gen.sh`.
+
+Everything applicable is released under the GPLv3.
+
+Platform Support
+----------------
+This has been tested on OSX, Debian, and Ubuntu, and works without a standard
+install of the D system.
+
+It doesn't work on Windows; pull requests to add support for that, or anything
+else, are appreciated.
 
