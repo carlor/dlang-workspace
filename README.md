@@ -1,4 +1,3 @@
-
 `dlang-workspace` contains the basic configurations for hacking on your own
 fork of `dmd`, `druntime`, and `phobos` on nix systems, while not conflicting
 with your installed stable version.
@@ -11,15 +10,15 @@ To install:
     $ git clone <druntime, the central repo or your fork>
     $ git clone <phobos,   the central repo or your fork>
 
-Now, you can run the `posix/gen.sh` script to build all repositories. You can
-specify what item specifically to build (`dmd`, `phobos`, or `druntime`) as a
-parameter to `gen.sh`.
+Now, you can run this to build all repositories:
+    
+    $ bash posix/gen.sh
+
+You can specify what item specifically to build (`dmd`, `phobos`, or `druntime`)
+as a command-line parameter.
 
 It makes an executable which links to your fork of druntime/phobos called `wbd`.
 You guess the acronym (hint: MRI).
-
-You can specify what item specifically to build (`dmd`, `phobos`, or `druntime`)
-as a parameter to `gen.sh`.
 
 Everything applicable is released under the GPLv3.
 
