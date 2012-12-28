@@ -1,41 +1,87 @@
+#! /bin/sh
 
 model=`getconf LONG_BIT`
 
-# dmd
-make_dmd () {
-    cd ./dmd/src
-    make -f posix.mak MODEL=$model TARGET_CPU=X86
-    cd ../..
-    cp ./dmd/src/dmd ./wbd;
+# readlink may not be sufficiently universal to be viable here.
+scriptPath=$( readlink -f $( cd $(dirname $0) && pwd -P ) )
+
+homePath=$scriptPath/..
+dmdPath=$homePath/dmd
+druntimePath=$homePath/druntime
+phobosPath=$homePath/phobos
+
+make_dmd() {
+    ( cd $dmdPath/src &&
+        make -f posix.mak MODEL=$model TARGET_CPU=X86 )
+    cp $dmdPath/src/dmd wbd
 }
 
-make_druntime () {
-    cd ./druntime
-    make -f posix.mak MODEL=$model DMD=../wbd
-    cd ..
+clean_dmd() {
+    ( cd $dmdPath/src &&
+        make -f posix.mak MODEL=$model TARGET_CPU=X86 clean )
 }
 
-make_phobos () {
-    cd ./phobos
-    make -f posix.mak MODEL=$model DMD=../wbd
-    cd ..
+make_druntime() {
+    ( cd $druntimePath &&
+        make -f posix.mak MODEL=$model DMD=$homePath/wbd )
+}
+
+clean_druntime() {
+    ( cd $druntimePath &&
+        make -f posix.mak MODEL=$model clean )
+}
+
+make_phobos() {
+    ( cd ./phobos &&
+        make -f posix.mak MODEL=$model DMD=$homePath/wbd )
     platform=`ls ./phobos/generated`
-    cp ./phobos/generated/$platform/release/$model/libphobos2.a ./libphobos2.a
+    cp $phobosPath/generated/$platform/release/$model/libphobos2.a ./libphobos2.a
 }
 
-if [ $# = 0 ]
-  then
+clean_phobos() {
+    ( cd ./phobos &&
+        make -f posix.mak MODEL=$model clean )
+}
+
+if [ $# = 0 ]; then
     make_dmd && make_druntime && make_phobos
-fi
-
-if [ $# = 1 ]
-  then
-    if [ $1 = '--help' ]
-      then
+else
+    if [ $1 = clean ]; then
+        if [ $# = 1 ]; then
+            clean_dmd && clean_druntime && clean_phobos
+            exit 0
+        fi
+        case $2 in
+            dmd)
+                clean_dmd
+                ;;
+            phobos)
+                clean_phobos
+                ;;
+            druntime)
+                clean_druntime
+                ;;
+            *)
+                echo "Unknown component."
+                exit 1
+        esac
+    elif [ $1 = help ]; then
         echo "see README.md"
-    fi
-    test $1 == 'dmd' && make_dmd
-    test $1 == 'phobos' && make_phobos
-    test $1 == 'druntime' && make_druntime
-fi
+    else
+        case $1 in
+            dmd)
+                make_dmd
+                ;;
+            phobos)
+                make_phobos
+                ;;
+            druntime)
+                make_druntime
+                ;;
+            *)
+                echo "Unknown component."
+                exit 1
+        esac
 
+    fi
+fi
