@@ -3,7 +3,7 @@
 model=`getconf LONG_BIT`
 
 # readlink may not be sufficiently universal to be viable here.
-scriptPath=$( readlink -f $( cd $(dirname $0) && pwd -P ) )
+scriptPath=$( stat -f $( cd $(dirname $0) && pwd -P ) )
 
 homePath=$scriptPath/..
 dmdPath=$homePath/dmd
@@ -32,14 +32,14 @@ clean_druntime() {
 }
 
 make_phobos() {
-    ( cd ./phobos &&
+    ( cd $phobosPath &&
         make -f posix.mak MODEL=$model DMD=$homePath/wbd )
-    platform=`ls ./phobos/generated`
-    cp $phobosPath/generated/$platform/release/$model/libphobos2.a ./libphobos2.a
+    platform=`ls $phobosPath/generated`
+    cp $phobosPath/generated/$platform/release/$model/libphobos2.a $homePath/libphobos2.a
 }
 
 clean_phobos() {
-    ( cd ./phobos &&
+    ( cd $phobosPath &&
         make -f posix.mak MODEL=$model clean )
 }
 
