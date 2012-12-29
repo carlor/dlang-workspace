@@ -2,9 +2,7 @@
 
 model=`getconf LONG_BIT`
 
-# readlink may not be sufficiently universal to be viable here.
-scriptPath=$( stat -f $( cd $(dirname $0) && pwd -P ) )
-
+scriptPath=`dirname $0`
 homePath=$scriptPath/..
 dmdPath=$homePath/dmd
 druntimePath=$homePath/druntime
@@ -13,7 +11,7 @@ phobosPath=$homePath/phobos
 make_dmd() {
     ( cd $dmdPath/src &&
         make -f posix.mak MODEL=$model TARGET_CPU=X86 )
-    cp $dmdPath/src/dmd wbd
+    cp $dmdPath/src/dmd $homePath/wbd
 }
 
 clean_dmd() {
