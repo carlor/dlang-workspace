@@ -2,7 +2,10 @@
 
 model=`getconf LONG_BIT`
 
-scriptPath=`dirname $0`
+current=`pwd`
+
+cd `dirname $0`
+scriptPath=`pwd -P`
 homePath=$scriptPath/..
 dmdPath=$homePath/dmd
 druntimePath=$homePath/druntime
@@ -83,3 +86,5 @@ else
 
     fi
 fi
+
+cd $current
